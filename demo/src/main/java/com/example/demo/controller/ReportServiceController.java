@@ -55,15 +55,15 @@ public class ReportServiceController {
       return response;
    }
 
-   //    @GetMapping("/guest/{guestId}")
-   //    public Map<String, Object> getGuestActivityReport(@PathVariable Long guestId) {
-   //       List<Booking> bookingHistory = reportService.getGuestBookingHistory(guestId);
+   @GetMapping("/guest/{guestId}")
+   public Map<String, Object> getGuestActivityReport(@PathVariable Long guestId) {
+      List<Booking> bookingHistory = reportService.getGuestBookingHistory(guestId);
 
-   //       Map<String, Object> response = new HashMap<>();
-   //       response.put("guestId", guestId);
-   //       response.put("totalBookings", bookingHistory.size());
-   //       response.put("bookingHistory", bookingHistory);
+      Map<String, Object> response = new HashMap<>();
+      response.put("guestId", guestId);
+      response.put("totalBookings", bookingHistory.size());
+      response.put("bookingHistory", bookingHistory);
 
-   //       return response;
-   //    }
+      return response;
+   }
 }
