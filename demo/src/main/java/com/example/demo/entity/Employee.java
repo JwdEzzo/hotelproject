@@ -1,14 +1,13 @@
 package com.example.demo.entity;
 
-import java.util.List;
+import com.example.demo.enums.EmployeeRole;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import lombok.Data;
 
 @Entity
@@ -19,23 +18,26 @@ public class Employee {
       @GeneratedValue(strategy = GenerationType.IDENTITY)
       private Long id;
 
-      private String name;
+      private String firstName;
 
-      private String information;
+      private String lastName;
 
-      private String role;
+      private String email;
 
-      @ManyToMany
-      @JoinTable(
-                  //
-                  name = "employee_service",
+      @Enumerated(EnumType.STRING)
+      private EmployeeRole role;
 
-                  joinColumns = @JoinColumn(name = "employee_id"),
+      // @ManyToMany
+      // @JoinTable(
+      //             //
+      //             name = "employee_hotelService",
 
-                  inverseJoinColumns = @JoinColumn(name = "service_id")
+      //             joinColumns = @JoinColumn(name = "employee_id"),
 
-      )
+      //             inverseJoinColumns = @JoinColumn(name = "hotelService_id")
 
-      private List<HotelService> services;
+      // )
+
+      // private Set<HotelService> services;
 
 }

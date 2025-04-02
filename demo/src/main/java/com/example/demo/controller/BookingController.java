@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.entity.Booking;
 import com.example.demo.service.BookingService;
-import com.example.demo.service.GuestService;
-import com.example.demo.service.RoomService;
 
 @RestController
 @RequestMapping("/bookings")
@@ -64,7 +62,7 @@ public class BookingController {
       bookingService.associateBookingWithGuest(bookingId, guestId);
    }
 
-   // POST -- Associate Booking With Guest
+   // POST -- Associate Booking With Room
    @PostMapping("/associatebookingwithroom")
    public void associateBookingWithroom(@RequestBody Map<String, Long> guestRoomMap) {
       Long bookingId = guestRoomMap.get("bookingId");

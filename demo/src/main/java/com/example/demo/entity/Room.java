@@ -5,7 +5,8 @@ import lombok.Data;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.example.demo.enums.RoomStatus;
+import com.example.demo.enums.RoomType;
 
 @Entity
 @Data
@@ -14,24 +15,18 @@ public class Room {
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
 
-        @Column(name = "room_number", unique = true, nullable = false)
+        @Column(unique = true)
         private String roomNumber;
 
-        @Column(name = "room_type", nullable = false)
-        private String roomType;
+        @Enumerated(EnumType.STRING)
+        private RoomType roomType;
 
-        @Column(name = "price_per_night", nullable = false)
+        @Enumerated(EnumType.STRING)
+        private RoomStatus roomStatus;
+
         private double pricePerNight;
 
-        @Column(name = "availability_status", nullable = false)
-        private boolean availabilityStatus;
-
-        @ManyToMany(mappedBy = "rooms", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE })
-        @JsonIgnore
-        private List<HotelService> services;
-
-        @OneToOne(mappedBy = "room", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE })
-        private Booking booking;
-
+        @OneToMany(mappedBy = "room", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE })
+        private List<Booking> booking;
 
 }

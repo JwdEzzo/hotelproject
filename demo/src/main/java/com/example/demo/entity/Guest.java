@@ -1,34 +1,35 @@
 package com.example.demo.entity;
 
+import java.util.List;
+
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
+
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
+
 import lombok.Data;
 
 @Data
 @Entity
 public class Guest {
-
    @Id
    @GeneratedValue(strategy = GenerationType.IDENTITY)
    private Long id;
 
-   private String name;
+   private String firstName;
 
-   private String contact;
+   private String lastName;
 
-   private String address;
+   @Column(unique = true)
+   private String email;
 
-   @OneToOne(mappedBy = "guest", cascade = CascadeType.ALL)
-   private Booking booking;
+   @Column(unique = true)
+   private String phoneNumber;
 
-   @OneToOne
-   @JoinColumn(name = "room_id")
-   private Room room;
-
+   @OneToMany(mappedBy = "guest", cascade = CascadeType.ALL)
+   private List<Booking> bookings;
 }

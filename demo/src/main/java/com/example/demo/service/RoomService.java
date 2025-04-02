@@ -1,12 +1,15 @@
 package com.example.demo.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.entity.HotelService;
 import com.example.demo.entity.Room;
+import com.example.demo.enums.RoomStatus;
+import com.example.demo.enums.RoomType;
+
 import com.example.demo.repository.RoomRepository;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -21,6 +24,26 @@ public class RoomService {
    // Create a Room
    public Room createRoom(Room thisRoom) {
       return roomRepository.save(thisRoom);
+   }
+
+   // Read a Room by Room Number
+   public Room getRoomByRoomNumber(String roomNumber) {
+      return roomRepository.findByRoomNumber(roomNumber);
+   }
+
+   // Read Rooms by Room Type
+   public List<Room> getRoomByRoomType(RoomType roomType) {
+      return roomRepository.findByRoomType(roomType);
+   }
+
+   // Read a Room by Room Status
+   public List<Room> getRoomByRoomStatus(RoomStatus roomStatus) {
+      return roomRepository.findByRoomStatus(roomStatus);
+   }
+
+   // Read ALL Available Rooms
+   public List<Room> getAvailableRooms(LocalDateTime checkIn, LocalDateTime checkOut) {
+      return roomRepository.findAvailableRooms(checkIn, checkOut);
    }
 
    // Read ALL Rooms
@@ -38,7 +61,7 @@ public class RoomService {
       Room oldRoom = roomRepository.findById(id).orElseThrow(() -> new RuntimeException("Room not found"));
 
       oldRoom.setPricePerNight(roomDetails.getPricePerNight());
-      oldRoom.setAvailabilityStatus(roomDetails.isAvailabilityStatus());
+      oldRoom.setRoomStatus(roomDetails.getRoomStatus());
       oldRoom.setRoomNumber(roomDetails.getRoomNumber());
       oldRoom.setRoomType(roomDetails.getRoomType());
 
@@ -48,22 +71,10 @@ public class RoomService {
    // Delete a Room
    @Transactional
    public void deleteRoom(Long roomId) {
-      Room room = roomRepository.findById(roomId)
-         .orElseThrow(() -> new EntityNotFoundException("Room not found"));
-      
-      // Manually remove associations from the other side
-      for (HotelService service : room.getServices()) {
-         service.getRooms().remove(room);
+      if (roomRepository.existsById(roomId)) {
+         roomRepository.deleteById(roomId);
+      } else {
+         throw new EntityNotFoundException("Room not found with id: " + roomId);
       }
-      
-      // Clear local associations
-      room.getServices().clear();
-      
-      // First save to update relationships
-      roomRepository.save(room);
-      
-      // Then delete
-      roomRepository.delete(room);
    }
-
 }

@@ -27,32 +27,34 @@ public class HotelServiceController {
    @Autowired
    private HotelServiceService hotelServiceService;
 
-   // POST -- Create a Booking
+   // POST -- Create a HotelService
    @Transactional
    @PostMapping()
    public HotelService createHotelService(@RequestBody HotelService hotelService) {
       return hotelServiceService.createHotelService(hotelService);
    }
 
-   // GET -- Read ALL Bookings
+   // GET -- Read ALL HotelServices
    @GetMapping()
    public List<HotelService> getAllHotelServices() {
       return hotelServiceService.getAllHotelServices();
    }
 
-   // GET -- Read a Booking by Id
+   // GET -- Read a HotelService by Id
    @GetMapping("/{id}")
    public HotelService getHotelServiceById(@PathVariable Long id) {
       return hotelServiceService.getHotelServiceById(id);
    }
 
-   // PUT -- Update a Booking
+   // GET 
+
+   // PUT -- Update a HotelService
    @PutMapping("/{id}")
    public HotelService updateHotelService(@PathVariable Long id, @RequestBody HotelService hotelServiceDetails) {
       return hotelServiceService.updateHotelService(id, hotelServiceDetails);
    }
 
-   // DELETE -- Delete a Booking
+   // DELETE -- Delete a HotelService
    @DeleteMapping("/{id}")
    public void deleteHotelService(@PathVariable Long id) {
       hotelServiceService.deleteHotelService(id);
@@ -68,6 +70,25 @@ public class HotelServiceController {
 
       hotelServiceService.provideHotelServiceToRoom(hotelServiceId, roomId);
 
+   }
+
+   // DELETE -- TEST METHOD:  Remove HotelService from a Room
+
+   @DeleteMapping("/removeroom/{hotelServiceId}/{roomId}")
+   public void removeHotelServiceFromRoom(@PathVariable Long hotelServiceId, @PathVariable Long roomId) {
+
+      hotelServiceService.removeHotelServiceFromRoom(hotelServiceId, roomId);
+   }
+
+   // POST -- Provide HotelService to Room
+
+   @PostMapping("/removeservicefromroom")
+   public void removeHotelServiceToRoomss(@RequestBody Map<String, Long> hotelServiceRoomMapping) {
+
+      Long hotelServiceId = hotelServiceRoomMapping.get("hotelServiceId");
+      Long roomId = hotelServiceRoomMapping.get("roomId");
+
+      hotelServiceService.removeHotelServiceFromRoom(hotelServiceId, roomId);
    }
 
    // @PostMapping("/providerooms")

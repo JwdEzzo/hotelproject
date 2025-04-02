@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.example.demo.entity.Booking;
 import com.example.demo.entity.Guest;
 import com.example.demo.entity.Room;
+import com.example.demo.enums.RoomStatus;
 import com.example.demo.repository.BookingRepository;
 import com.example.demo.repository.GuestRepository;
 import com.example.demo.repository.RoomRepository;
@@ -43,8 +44,9 @@ public class BookingService {
    public Booking updateBooking(Long id, Booking bookingDetails) {
       Booking oldBooking = bookingRepository.findById(id).orElseThrow(() -> new RuntimeException("Booking not found"));
 
-      oldBooking.setCheckInDate(bookingDetails.getCheckInDate());
-      oldBooking.setCheckOutDate(bookingDetails.getCheckOutDate());
+      oldBooking.setCheckInDateTime(bookingDetails.getCheckInDateTime());
+      oldBooking.setCheckOutDateTime(bookingDetails.getCheckOutDateTime());
+      oldBooking.setTotalPrice(bookingDetails.getTotalPrice());
       return bookingRepository.save(oldBooking);
 
    }
@@ -56,21 +58,45 @@ public class BookingService {
 
    // Associate a Booking with a Room
    public void associateBookingWithRoom(Long bookingId, Long roomId) {
-      Booking thisBooking = bookingRepository.findById(bookingId).orElseThrow(() -> new RuntimeException("This Booking Doesnt exist"));
+      Booking thisBooking = bookingRepository.findById(bookingId)
+            .orElseThrow(() -> new RuntimeException("This Booking Doesnt exist"));
 
-      Room thisRoom = roomRepository.findById(roomId).orElseThrow(() -> new RuntimeException("This Booking Doesnt exist"));
+      Room thisRoom = roomRepository.findById(roomId)
+            .orElseThrow(() -> new RuntimeException("This Room Doesnt exist"));
 
-      thisBooking.setRoom(thisRoom);
-      bookingRepository.save(thisBooking);
+      if (thisRoom.getRoomStatus() != RoomStatus.AVAILABLE) {
+         throw new RuntimeException("Room is not available. Current status: " + thisRoom.getRoomStatus());
+      } else {
+         System.out.println(" This room is Available");
+         thisRoom.setRoomStatus(RoomStatus.valueOf("OCCUPIED"));
+         thisBooking.setRoom(thisRoom);
+         bookingRepository.save(thisBooking);
+         roomRepository.save(thisRoom);
+      }
    }
 
    // Associate Booking with Guest
    public void associateBookingWithGuest(Long bookingId, Long guestId) {
-      Booking thisBooking = bookingRepository.findById(bookingId).orElseThrow(() -> new RuntimeException("This Booking Doesnt exist"));
+      // Get the Booking that you want to associate
+      Booking thisBooking = bookingRepository.findById(bookingId)
+            .orElseThrow(() -> new RuntimeException("This Booking Doesnt exist"));
 
-      Guest thisGuest = guestRepository.findById(guestId).orElseThrow(() -> new RuntimeException("This  Booking Doesnt exist"));
+      // Get the Guest that you want to associate
+      Guest thisGuest = guestRepository.findById(guestId)
+            .orElseThrow(() -> new RuntimeException("This Guest Doesnt exist"));
 
-      thisBooking.setGuest(thisGuest);
-      bookingRepository.save(thisBooking);
+      // Get the room from the booking
+      Room thisRoom = thisBooking.getRoom();
+      System.out.println("Current room status: " + thisRoom.getRoomStatus());
+
+      if (thisRoom.getRoomStatus() != RoomStatus.AVAILABLE) {
+         throw new RuntimeException("Room is not available. Current status: " + thisRoom.getRoomStatus());
+      } else {
+         System.out.println(" This room is Available");
+         thisRoom.setRoomStatus(RoomStatus.valueOf("OCCUPIED"));
+         thisBooking.setGuest(thisGuest);
+         bookingRepository.save(thisBooking);
+         roomRepository.save(thisRoom);
+      }
    }
 }

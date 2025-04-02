@@ -22,20 +22,24 @@ public class HotelServiceService {
    @Autowired
    private HotelServiceRepository hotelServiceRepository;
 
+   //Create a Hotel Service
    @Transactional
    public HotelService createHotelService(HotelService thisHotelService) {
       return hotelServiceRepository.save(thisHotelService);
    }
 
+   // Get ALL HotelServices
    public List<HotelService> getAllHotelServices() {
       return hotelServiceRepository.findAll();
    }
 
+   // Get Hotel Service By Id
    public HotelService getHotelServiceById(Long id) {
       return hotelServiceRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("HotelService not found with id: " + id));
    }
 
+   // Update a HotelService
    @Transactional
    public HotelService updateHotelService(Long id, HotelService hotelServiceDetails) {
       HotelService oldHotelService = hotelServiceRepository.findById(id)
@@ -74,23 +78,21 @@ public class HotelServiceService {
       }
    }
 
+   public void removeHotelServiceFromRoom(Long hotelServiceId, Long roomId) {
+      HotelService hotelService = hotelServiceRepository.findById(hotelServiceId)
+            .orElseThrow(() -> new EntityNotFoundException("HotelService not found"));
+
+      Room room = roomRepository.findById(roomId)
+            .orElseThrow(() -> new EntityNotFoundException("Room not found"));
+
+      if (hotelService.getRooms().contains(room)) {
+         hotelService.getRooms().remove(room);
+         hotelServiceRepository.save(hotelService);
+      }
+   }
+
+   // public Set<HotelService> findByEmployees(Employee employee) {
+   //    return hotelServiceRepository.findByEmployees(employee);
+   // }
+
 }
-
-// Provide HotelService to Room
-
-//    public void provideHotelServiceToRoom(Long hotelServiceId, Long roomId){
-//       try {
-//           HotelService thisHotelService = hotelServiceRepository.findById(hotelServiceId)
-//               .orElseThrow(() -> new EntityNotFoundException("HotelService not found with id: " + hotelServiceId));
-
-//           Room thisRoom = roomRepository.findById(roomId)
-//               .orElseThrow(() -> new EntityNotFoundException("Room not found with id: " + roomId));
-
-//           thisHotelService.getRooms().add(thisRoom);
-//           hotelServiceRepository.save(thisHotelService);
-//       } catch (Exception e) {
-//           // Log the full error details
-//           e.printStackTrace();
-//           throw new RuntimeException("Failed to provide hotel service to room", e);
-//       }
-//   }
